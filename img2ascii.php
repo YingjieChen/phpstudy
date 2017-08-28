@@ -3,10 +3,10 @@
 	function getGrayData($mImage,$mImgWidth,$mImgHeigh){
          	for($mY=0;$mY<$mImgHeigh;$mY++){
                		for($mX=0;$mX<$mImgWidth;$mX++){
-                   		$mRGB = Imagecolorat($mImage, $mX, $mY);
-				$mR = ($mRGB >> 16) & 0xFF;
-				$mG = ($mRGB >> 8) & 0xFF;
-				$mB = $mRGB & 0xFF;
+                   		$mRGB 	= 	Imagecolorat($mImage, $mX, $mY);
+				$mR 	= 	($mRGB >> 16) & 0xFF;
+				$mG 	= 	($mRGB >> 8) & 0xFF;
+				$mB 	= 	$mRGB & 0xFF;
 				$mGrayData[$mX][$mY] = ($mR * 19595 + $mG * 38469 + $mB * 7472) >> 16;
 			}
 		}
@@ -14,23 +14,23 @@
       	}
 	$txt =array('A','B','C','D','E','F','G','H','I','J','K');
 	//加载原始图像
-	$rawImage =	imagecreatefromjpeg('image.jpg');
+	$rawImage 	=	imagecreatefromjpeg('image.jpg');
 	//获取原始图像宽高
-	$rawImgWidth = ImagesX($rawImage);
-	$rawImgHeigh = ImagesY($rawImage);
+	$rawImgWidth 	= 	ImagesX($rawImage);
+	$rawImgHeigh 	= 	ImagesY($rawImage);
 	//获取原始图像灰度
-	$grayData = getGrayData($rawImage,$rawImgWidth,$rawImgHeigh);
+	$grayData 	= 	getGrayData($rawImage,$rawImgWidth,$rawImgHeigh);
 	//销毁图像
 	ImageDestroy($rawImage);
 	//创建文字图像
-	$txtImage = ImageCreate($rawImgWidth*6,$rawImgHeigh*9);
+	$txtImage 	= 	ImageCreate($rawImgWidth*6,$rawImgHeigh*9);
 	//新图像背景色
 	imagecolorallocate($txtImage,32,32,32);
 	//获取最大灰度
 	for($i=0;$i<count($grayData);$i++){
 		$maxGrayArray[$i] = max($grayData[$i]);
 	}
-	$maxGray = max($maxGrayArray);
+	$maxGray 	=	max($maxGrayArray);
 	//设置灰度对应颜色
 	for($i=0;$i<$maxGray+1;$i++){
 		$color = 255-round(200/$maxGray)*$i+55;
