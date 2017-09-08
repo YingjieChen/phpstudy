@@ -1,4 +1,33 @@
 <?php
+	function mb_wordwrap($str, $width = 75,$charset='utf-8',$break = "\n", $cut = false) {
+                $lines = explode($break, $str);
+                foreach ($lines as &$line) {
+                        $line = rtrim($line);
+                        if (mb_strlen($line,$charset) <= $width)
+                                continue;
+                        $words = explode(' ', $line);
+                        $line = '';
+                        $actual = '';
+                        foreach ($words as $word) {
+                                if (mb_strlen($actual.$word,$charset) <= $width)
+                                        $actual .= $word.' ';
+                                else {
+                                        if ($actual != '')
+                                                $line .= rtrim($actual).$break;
+                                                $actual = $word;
+                                        if ($cut) {
+                                                while (mb_strlen($actual,$charset) > $width) {
+                                                        $line .= mb_substr($actual, 0, $width,$charset).$break;
+                                                        $actual = mb_substr($actual, $width,$charset);
+                                                }
+                                        }
+                                        $actual .= ' ';
+                                }
+                        }
+                        $line .= trim($actual);
+                }
+                return implode($break, $lines);
+        }
 	$string		=	'The mayor of China is retiring, ready to return to his old age with his wife.
 In the hundreds of miles, as long as the mayor of China is mentioned,
 no one does not praise him, he is the same age as his father,
@@ -52,6 +81,6 @@ Where are you, my dream home?Where are you, my childhood friend?
 Actually, the hometown is not far away, she always deep in the bottom of her heart,
 it is the homesickness that is difficult to give up,
 it is the heart of the heart dream around!';
-	$newtext 	= 	wordwrap($string,70, "\n", false);
+	$newtext 	= 	mb_wordwrap($string,70,'utf-8', "\n", false);
 	echo $newtext;
 ?>
