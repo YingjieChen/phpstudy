@@ -26,8 +26,12 @@ class circleSeal {
 	private $charRadius;  //字符串半径
 	private $charAngle;   //字符串倾斜角度
 	private $spacing;    //字符间隔角度
+	private $wrapsize;	//缩进角度
+	private $startangle;	//字符串开始的角度
+	private $angleSize;	//整个字符串跨越的角度
 	//构造方法
-	public function __construct($str ='', $rad = 300, $rmwidth = 6, $strad = 24, $stang = 0, $crang = 0, $fsize = 50, $inrad =0){
+	public function __construct($str ='', $rad = 300, $rmwidth = 6, $strad = 24, $stang = 0, $crang = 0, $fsize = 50, $inrad =0,$startangle=622,$angleSize=40){
+		$this->wrapsize		0;//当出现i,l 等比较瘦的字符的时候，要进行一个缩进
 		$this->sealString  = empty($str) ? '印章测试字符串' : $str;
 		$this->strMaxLeng  = 12;
 		$this->sealRadius  = $rad;
@@ -41,6 +45,9 @@ class circleSeal {
 		$this->fontSize   	= 	$fsize;
 		$this->innerRadius 	= 	$inrad;  //默认0,没有
 		$this->spacing   	= 	1;
+
+		$this->startangle	=	$startangle;
+		$this->angleSize       	=       $angleSize;
 	}
 	//创建图片资源
 	private function createImg(){
@@ -61,29 +68,46 @@ class circleSeal {
 	private function drawInnerCircle(){
 		imagearc($this->img,$this->centerDot['x'],$this->centerDot['y'],2*$this->innerRadius,2*$this->innerRadius,0,360,$this->backGround);
 	}
+	
+	private function fillbyzero($string,$maxlength){
+		//global $maxlength;
+		$stringlenght	=	mb_strlen($string,'utf-8');
+		$neededzero	=	$maxlength-$stringlenght;
+		$resultstring	=	$string;
+		for($i=1;$i<$neededzero/2;$i++){
+			$resultstring		=	" $resultstring ";
+		}
+		return $resultstring;
+	}
 	//画字符串
 	private function drawString(){
-		//编码处理
+                //编码处理
 		$charset = mb_detect_encoding($this->sealString);
 		if($charset != 'UTF-8'){
 			$this->sealString = mb_convert_encoding($this->sealString, 'UTF-8', 'GBK');
 		}
-		//相关计量
+                //相关计量
 		$this->charRadius = $this->sealRadius - $this->rimWidth - $this->fontSize; //字符串半径
-		$leng  = mb_strlen($this->sealString,'utf8'); //字符串长度
-		if($leng > $this->strMaxLeng) $leng = $this->strMaxLeng;
-		$avgAngle  = 360 / ($this->strMaxLeng);  //平均字符倾斜度
-		//拆分并写入字符串
-		$words = array(); //字符数组
-		for($i=0;$i<$leng;$i++){
-			$words[] = mb_substr($this->sealString,$i,1,'utf8');
-			$r = 630 + $this->charAngle + $avgAngle*($i - $leng/2) + $this->spacing*($i-1);   //坐标角度
-			$R = 720 - $this->charAngle + $avgAngle*($leng-2*$i-1)/2 + $this->spacing*(1-$i);  //字符角度
-			$x = $this->centerDot['x'] + $this->charRadius * cos(deg2rad($r)); //字符的x坐标
-			$y = $this->centerDot['y'] + $this->charRadius * sin(deg2rad($r)); //字符的y坐标
-			imagettftext($this->img, $this->fontSize, $R, $x, $y, $this->backGround, $this->font, $words[$i]);
-		}
-	}  
+                $leng  = mb_strlen($string,'utf8'); //字符串长度
+                $avgAngle  = $angleSize/($leng);  //平均字符倾斜度
+                //拆分并写入字符串 
+                $words = array(); //字符数组
+                for($i=0;$i<$leng;$i++){
+                        $words[] = mb_substr($this->sealString,$i,1,'utf8');
+                        switch($words[$i-1]){
+                                case("r"):
+                                case("l"):
+                                case("i"):
+                                        $this->wrapsize+=0.5;
+                                break;
+                        }
+                        $r = $this->startangle + $this->avgAngle*($i - $leng/2-$this->wrapsize) + ($i-1);   //坐标角度
+                        $R = $this->startangle+98 - $this->avgAngle*($leng-2*$i-1)/2 + (1-$i);  //字符角度
+                        $x = $this->centerDot['x'] + $this->charRadius * cos(deg2rad($r)); //字符的x坐标
+ 			$y = $this->centerDot['y'] + $this->charRadius * sin(deg2rad($r)); //字符的y坐标
+                        imagettftext($this->img, $this->fontSize, $R, $x, $y, $this->backGround, $this->font, $words[$i]);
+                }
+        }
 	//画五角星
 	private function drawStart(){
 		$ang_out = 18 + $this->startAngle;
