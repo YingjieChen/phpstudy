@@ -21,6 +21,13 @@
 		curl_setopt($ch, CURLOPT_POST, 1);
 		// post的变量
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+		
+		// put 数据
+		curl_setopt($handle, CURLOPT_CUSTOMREQUEST, 'PUT');
+		curl_setopt($handle, CURLOPT_POSTFIELDS, $data); //设置请求体，提交数据包
+
+		// delete 数据
+		curl_setopt($handle, CURLOPT_CUSTOMREQUEST, 'DELETE');
 	*/
         //执行并获取HTML文档内容
         $output         =       curl_exec($ch);
