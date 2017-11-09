@@ -1,5 +1,5 @@
 <?php
-	function mb_wordwrap($str, $width = 75,$charset='utf-8',$break = "\n", $cut = false) {
+	function mb_wordwrap($str, $width = 75,$charset='utf-8',$break = "\n", $cut = false){
                 $lines = explode($break, $str);
                 foreach ($lines as &$line) {
                         $line = rtrim($line);
