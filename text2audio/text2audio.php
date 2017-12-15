@@ -2,8 +2,7 @@
 	//http://tsn.baidu.com/text2audio?tex=asd&lan=zh&cuid=***&ctp=1&tok=24.e7660103e17e9986b857103c4dd50734.2592000.1483842272.282335-5154342
 	$filecontent	=	file_get_contents("http://tsn.baidu.com/text2audio?tex=asd&lan=zh&cuid=***&ctp=1&tok=24.57c11786abda4d21333070c0876ec186.2592000.1513581339.282335-5154342");
 	$response	=	json_decode($filecontent,true);
-	if(isset($response["err_no"]))
-	{
+	if(isset($response["err_no"])){
 		echo $filecontent;	
 	}else{
 		$time   =       time();
