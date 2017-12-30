@@ -16,7 +16,7 @@
 			//作者
 			$author		=	preg_replace('/<a[^>]*data-hook="review-author"[^>]*>/si',"",$author_source[0][$key]);
 			preg_match_all('/Amazon/si',$author,$contain_amazon);
-			if(count($contain_amazon)>1) $author="anymous";
+			if(count($contain_amazon)>1) $author="Anonymous";
 
 			//内容
 			$body			=	preg_replace('/<span[^>]*data-hook="review-body"[^>]*>/si',"",$body_source[0][$key]);
@@ -36,6 +36,8 @@
 				foreach($reviews_str[0] as $filekey=>$review_str){
 					$review_str	=	preg_replace('/<img(.*)src="/si',"",$review_str);
 					$review_str     =       preg_replace('/\"(.*)/si',"",$review_str);
+					$review_str     =       str_replace('._SY88',"",$review_str);
+					print_r($review_str);
 					$time		=	time();
 					$dir		=	date("Y-m-d",$time);
 					if(!file_exists($dir)) 	{

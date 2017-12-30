@@ -1,6 +1,7 @@
 <?php
 	function getreviews($url,$page,&$reviews){
 		//获取网页内容
+		$reviews		=	array();
 		$filecontent		=	file_get_contents("$url$page");
 		preg_match_all('/<span class="user-name">(.+?)<\/span>/si',$filecontent,$author_source);
 		preg_match_all('/<dt class="buyer-feedback">(.+?)<\/span>/si',$filecontent,$body_source);
@@ -18,7 +19,7 @@
 			preg_match_all('/AliExpress/si',$author,$contain_amazon);
 			$author		=	preg_replace('/<a[^>]*>/si',"",$author);
 			$author         =       trim(preg_replace('/<\/a>/si',"",$author));
-			if(count($contain_amazon)>0) $author="anymous";
+			if(count($contain_amazon)>0) $author="Anonymous";
 			//内容
 			$body			=	trim(str_replace('<span>',"",$body_source[1][$key]));
 			if($body=="") continue;
@@ -29,7 +30,7 @@
 			if($rating<=3) continue;
 			
 			//抽出其中的图片
-			preg_match_all("/<li[^>]*pic-view-item[^>]*data-src=\"(.+?)\">/si",$picture_source[$key],$pictures);
+			preg_match_all("/<li[^>]*pic-view-item[^>]*data-src=\"(.+?)\"[^>]*[^>]*>/si",$picture_source[$key],$pictures);
 			//$reviews_strsource	=	count($reviews_pane)>1?$reviews_pane[1]:"";
 			$images         =       array();
 			if(count($pictures)>1){
